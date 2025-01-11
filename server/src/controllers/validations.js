@@ -1,8 +1,8 @@
-import { validate } from "../models/user.model";
+import userModel from "../models/user.model.js";
 
 const userValidator = (req, res, next) => {
   try {
-    const { error } = validate(req.body);
+    const { error } = userModel.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }

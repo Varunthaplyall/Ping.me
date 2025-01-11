@@ -1,6 +1,6 @@
-import { object, string } from "joi";
+import joi from "joi";
 
-const registerSchema = object({
+const registerSchema = joi.object({
   userName: string().required(),
   email: string().email().required(),
   password: string().min(4).required(),

@@ -1,12 +1,7 @@
-import { hash, compare } from "bcryptjs";
-import {
-  findOne,
-  create,
-  findByIdAndUpdate,
-  findById,
-} from "../models/user.model";
-import createToken from "../utils/createToken";
-import { uploader } from "../controllers/cloudnary";
+import bcrypt from "bcryptjs";
+import userModel from "../models/user.model.js";
+import createToken from "../utils/createToken.js";
+import cloudinary from "../controllers/cloudnary.js";
 
 const authController = {
   register: async (req, res) => {
@@ -19,13 +14,13 @@ const authController = {
         });
       }
 
-      const userExist = await findOne({ email });
+      const userExist = await userModel.findOne({ email });
       if (userExist) {
         return res.status(409).json({ message: "Email already exist" });
       }
-      const hashedPassword = await hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-      const createUser = await create({
+      const createUser = await userModel.create({
         userName,
         email,
         password: hashedPassword,
@@ -55,14 +50,14 @@ const authController = {
   login: async (req, res) => {
     const { email, password } = req.body;
     try {
-      const user = await findOne({ email });
+      const user = await userModel.findOne({ email });
       if (!user) {
         return res.status(400).json({
           success: false,
           message: "Invalid Credentials",
         });
       }
-      const isValid = await compare(password, user.password);
+      const isValid = await bcrypt.compare(password, user.password);
 
       if (!isValid) {
         return res.status(400).json({
@@ -100,16 +95,18 @@ const authController = {
         return res.status(400).json({ message: "Profile pic is required" });
       }
 
-      const result = await uploader.upload(profilePic);
+      const result = await cloudinary.uploader.upload(profilePic);
       const secureUrl = result.secure_url;
       console.log(secureUrl);
-      const user = await findByIdAndUpdate(
-        userId,
-        {
-          profilePicture: secureUrl,
-        },
-        { new: true }
-      ).select("-password");
+      const user = await userModel
+        .findByIdAndUpdate(
+          userId,
+          {
+            profilePicture: secureUrl,
+          },
+          { new: true }
+        )
+        .select("-password");
 
       console.log(user);
 
@@ -122,7 +119,7 @@ const authController = {
 
   verify: async (req, res) => {
     try {
-      const user = await findById(req.user.id).select("-password");
+      const user = await userModel.findById(req.user.id).select("-password");
       res.status(200).json({ message: "user verified", user: user });
     } catch (error) {
       console.log("Error ocurred while verifying user", error);

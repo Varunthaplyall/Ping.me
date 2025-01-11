@@ -1,5 +1,5 @@
 import { json, urlencoded, static as serveStatic } from "express";
-require("dotenv").config();
+import dotenv from "dotenv";
 const PORT = process.env.PORT;
 import cors from "cors";
 import { connect } from "mongoose";
@@ -9,6 +9,7 @@ import { app, server } from "../libs/socket.js";
 import { resolve, join } from "path";
 const __dirname = resolve();
 
+dotenv.config();
 app.use(cors());
 app.use(json({ limit: "50mb" }));
 app.use(urlencoded({ limit: "50mb", extended: true }));

@@ -1,4 +1,4 @@
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 const protectedRoute = (req, res, next) => {
   let token = req.headers["authorization"];
@@ -6,7 +6,7 @@ const protectedRoute = (req, res, next) => {
   if (token && token.startsWith("Bearer ")) {
     const actualToken = token.split(" ")[1];
     try {
-      const decoded = verify(
+      const decoded = jwt.verify(
         actualToken,
         process.env.JWT_SECRET,
         (err, decoded) => {

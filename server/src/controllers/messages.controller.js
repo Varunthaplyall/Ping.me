@@ -1,17 +1,19 @@
-import { find } from "../models/user.model";
-import MessageModel, { find as _find } from "../models/messages.model";
-import { uploader } from "../controllers/cloudnary";
-import { getReciverSocketId } from "../../libs/socket";
-import { io } from "../../libs/socket";
+import userModel from "../models/user.model.js";
+import MessageModel from "../models/messages.model.js";
+import cloudinary from "../controllers/cloudnary.js";
+import { getReciverSocketId } from "../../libs/socket.js";
+import { io } from "../../libs/socket.js";
 
 const messageController = {
   getUsersForSidebar: async (req, res) => {
     try {
       const loggedInUser = req.user.id;
 
-      const filteredUser = await find({
-        _id: { $ne: loggedInUser },
-      }).select("-password");
+      const filteredUser = await userModel
+        .find({
+          _id: { $ne: loggedInUser },
+        })
+        .select("-password");
 
       res.status(200).json(filteredUser);
     } catch (error) {
@@ -23,7 +25,7 @@ const messageController = {
     try {
       const { id: recieverId } = req.params;
       const myId = req.user.id;
-      const messages = await _find({
+      const messages = await userModel.find({
         $or: [
           { senderId: myId, recieverId: recieverId },
           { senderId: recieverId, recieverId: myId },
@@ -44,7 +46,7 @@ const messageController = {
 
       let imageUrl;
       if (image) {
-        const result = await uploader.upload(image);
+        const result = await cloudinary.uploader.upload(image);
         imageUrl = result.secure_url;
       }
 
