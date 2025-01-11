@@ -1,9 +1,9 @@
-const joi = require("joi");
+import { object, string } from "joi";
 
-const registerSchema = joi.object({
-  userName: joi.string().required(),
-  email: joi.string().email().required(),
-  password: joi.string().min(4).required(),
+const registerSchema = object({
+  userName: string().required(),
+  email: string().email().required(),
+  password: string().min(4).required(),
 });
 
-module.exports = registerSchema;
+export default registerSchema;

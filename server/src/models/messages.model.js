@@ -1,13 +1,13 @@
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const messageSchema = mongoose.Schema(
+const messageSchema = Schema(
   {
     senderId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Users",
     },
     recieverId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Users",
     },
     text: {
@@ -20,6 +20,6 @@ const messageSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const messageModel = mongoose.model("Messages", messageSchema);
+const messageModel = model("Messages", messageSchema);
 
-module.exports = messageModel;
+export default messageModel;

@@ -1,8 +1,8 @@
-const registerSchema = require("../models/user.model");
+import { validate } from "../models/user.model";
 
 const userValidator = (req, res, next) => {
   try {
-    const { error } = registerSchema.validate(req.body);
+    const { error } = validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
@@ -13,4 +13,4 @@ const userValidator = (req, res, next) => {
   }
 };
 
-module.exports = userValidator;
+export default userValidator;

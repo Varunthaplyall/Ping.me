@@ -1,31 +1,30 @@
-const express = require("express");
+import { json, urlencoded, static as serveStatic } from "express";
 require("dotenv").config();
 const PORT = process.env.PORT;
-const cors = require("cors");
-const mongoose = require("mongoose");
-const authRoutes = require("./routes/auth.routes.js");
-const messageRoutes = require("./routes/messages.routes.js");
-const { app, server } = require("../libs/socket.js");
-const path = require("path");
-const __dirname = path.resolve();
+import cors from "cors";
+import { connect } from "mongoose";
+import authRoutes from "./routes/auth.routes.js";
+import messageRoutes from "./routes/messages.routes.js";
+import { app, server } from "../libs/socket.js";
+import { resolve, join } from "path";
+const __dirname = resolve();
 
 app.use(cors());
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(json({ limit: "50mb" }));
+app.use(urlencoded({ limit: "50mb", extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/dist")));
+  app.use(serveStatic(join(__dirname, "../client/dist")));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+    res.sendFile(join(__dirname, "../client", "dist", "index.html"));
   });
 }
 
-mongoose
-  .connect(process.env.MONGO_URL)
+connect(process.env.MONGO_URL)
   .then(() => {
     console.log("Connected to MongoDB");
     server.listen(PORT, () => {
