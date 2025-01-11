@@ -1,17 +1,12 @@
 import { Router } from "express";
 const router = Router();
-import {
-  register,
-  login,
-  updateProfile,
-  verify,
-} from "../controllers/auth.controllers";
+import authController from "../controllers/auth.controllers";
 import userValidator from "../controllers/validations";
 import protectedRoute from "../middlewares/protectedRoute.js";
 
-router.post("/register", userValidator, register);
-router.post("/login", login);
-router.put("/update-profile", protectedRoute, updateProfile);
-router.get("/verify", protectedRoute, verify);
+router.post("/register", userValidator, authController.register);
+router.post("/login", authController.login);
+router.put("/update-profile", protectedRoute, authController.updateProfile);
+router.get("/verify", protectedRoute, authController.verify);
 
 export default router;
